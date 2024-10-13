@@ -1,0 +1,136 @@
+BEGIN
+
+    // Initialize the phonebook as an empty list (array)
+    INITIALIZE phonebook AS empty list
+
+    FUNCTION addContact(name, phone)
+        IF name IS NOT EMPTY AND phone IS NOT EMPTY THEN
+            CREATE contact AS object with properties:
+                - name: name
+                - phone: phone
+            APPEND contact TO phonebook
+            DISPLAY "Contact added successfully."
+        ELSE
+            DISPLAY "Name and phone number cannot be empty."
+        END IF
+    END FUNCTION
+
+    FUNCTION searchContact(searchName)
+        INITIALIZE results AS empty list
+        FOR EACH contact IN phonebook DO
+            IF contact.name CONTAINS searchName THEN
+                APPEND contact TO results
+            END IF
+        END FOR
+        IF results IS NOT EMPTY THEN
+            DISPLAY "Search Results:"
+            FOR EACH result IN results DO
+                DISPLAY result.name AND result.phone
+            END FOR
+        ELSE
+            DISPLAY "No contacts found with that name."
+        END IF
+    END FUNCTION
+
+    FUNCTION displayContacts()
+        IF phonebook IS NOT EMPTY THEN
+            DISPLAY "All Contacts:"
+            FOR EACH contact IN phonebook DO
+                DISPLAY contact.name AND contact.phone
+            END FOR
+        ELSE
+            DISPLAY "No contacts available."
+        END IF
+    END FUNCTION
+
+    FUNCTION deleteContact(nameToDelete)
+        SET contactFound TO FALSE
+        FOR EACH contact IN phonebook DO
+            IF contact.name IS EQUAL TO nameToDelete THEN
+                REMOVE contact FROM phonebook
+                SET contactFound TO TRUE
+                BREAK
+            END IF
+        END FOR
+        IF contactFound THEN
+            DISPLAY "Contact deleted successfully."
+        ELSE
+            DISPLAY "Contact not found."
+        END IF
+    END FUNCTION
+
+    FUNCTION updateContact(oldName, newName, newPhone)
+        SET contactFound TO FALSE
+        FOR EACH contact IN phonebook DO
+            IF contact.name IS EQUAL TO oldName THEN
+                UPDATE contact.name TO newName
+                UPDATE contact.phone TO newPhone
+                SET contactFound TO TRUE
+                BREAK
+            END IF
+        END FOR
+        IF contactFound THEN
+            DISPLAY "Contact updated successfully."
+        ELSE
+            DISPLAY "Contact not found."
+        END IF
+    END FUNCTION
+
+    FUNCTION sortContacts()
+        SORT phonebook BY contact.name IN alphabetical order
+        DISPLAY "Contacts sorted alphabetically."
+    END FUNCTION
+
+    FUNCTION analyzeSearchEfficiency(searchName)
+        INITIALIZE comparisonCount AS 0
+        FOR EACH contact IN phonebook DO
+            INCREMENT comparisonCount
+            IF contact.name CONTAINS searchName THEN
+                BREAK
+            END IF
+        END FOR
+        DISPLAY "Search completed with" comparisonCount "comparisons."
+    END FUNCTION
+
+    // MAIN LOOP
+    WHILE application IS RUNNING
+        DISPLAY "Choose an option: (1) Add Contact, (2) Search Contact, (3) Display Contacts, (4) Delete Contact, (5) Update Contact, (6) Sort Contacts, (7) Analyze Search, (0) Exit"
+        INPUT userChoice
+        IF userChoice IS 1 THEN
+            PROMPT "Enter name:"
+            INPUT name
+            PROMPT "Enter phone number:"
+            INPUT phone
+            CALL addContact(name, phone)
+        ELSE IF userChoice IS 2 THEN
+            PROMPT "Enter name to search:"
+            INPUT searchName
+            CALL searchContact(searchName)
+        ELSE IF userChoice IS 3 THEN
+            CALL displayContacts()
+        ELSE IF userChoice IS 4 THEN
+            PROMPT "Enter name to delete:"
+            INPUT nameToDelete
+            CALL deleteContact(nameToDelete)
+        ELSE IF userChoice IS 5 THEN
+            PROMPT "Enter name to update:"
+            INPUT oldName
+            PROMPT "Enter new name:"
+            INPUT newName
+            PROMPT "Enter new phone number:"
+            INPUT newPhone
+            CALL updateContact(oldName, newName, newPhone)
+        ELSE IF userChoice IS 6 THEN
+            CALL sortContacts()
+        ELSE IF userChoice IS 7 THEN
+            PROMPT "Enter name to analyze search:"
+            INPUT searchName
+            CALL analyzeSearchEfficiency(searchName)
+        ELSE IF userChoice IS 0 THEN
+            EXIT application
+        ELSE
+            DISPLAY "Invalid choice, please try again."
+        END IF
+    END WHILE
+
+END
